@@ -1,0 +1,219 @@
+<!-- Page Heading -->
+<div class="page-heading">
+
+    <div>
+        <h3>Dashboard Overview</h3>
+        <p>Welcome back! Here's what's happening with your business.</p>
+    </div>
+
+    <div class="heading-actions">
+        <button class="btn btn-light border">
+            <i class="far fa-calendar me-2"></i>
+            Last 30 Days
+        </button>
+
+        <button class="btn btn-primary">
+            <i class="fas fa-download me-2"></i>
+            Export
+        </button>
+    </div>
+
+</div>
+
+
+<!-- Statistics -->
+<div class="row g-4 mb-4">
+
+    <% stats.forEach((stat, index) => { %>
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div>
+                        <p><%= stat.title %></p>
+                        <h3><%= stat.value %></h3>
+                    </div>
+
+                    <div class="stat-icon <%= stat.color %>">
+                        <i class="fas <%= stat.icon %>"></i>
+                    </div>
+
+                </div>
+
+                <div class="stat-bottom">
+
+                    <span class="positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <%= stat.change %>
+                    </span>
+
+                    <span>vs last month</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    <% }) %>
+
+</div>
+
+
+<!-- Charts Section -->
+<div class="row g-4 mb-4">
+
+    <div class="col-xl-8">
+
+        <div class="dashboard-card">
+
+            <div class="card-heading">
+
+                <div>
+                    <h5>Revenue Analytics</h5>
+                    <p>Monthly revenue performance</p>
+                </div>
+
+                <select class="form-select form-select-sm chart-filter">
+                    <option>Last 7 Months</option>
+                    <option>Last 12 Months</option>
+                </select>
+
+            </div>
+
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-4">
+
+        <div class="dashboard-card">
+
+            <div class="card-heading">
+                <div>
+                    <h5>Order Statistics</h5>
+                    <p>Order status overview</p>
+                </div>
+            </div>
+
+            <div class="chart-container order-chart-container">
+                <canvas id="orderChart"></canvas>
+            </div>
+
+            <div class="order-legend">
+                <div>
+                    <span class="legend-dot completed"></span>
+                    Completed
+                    <strong>65%</strong>
+                </div>
+
+                <div>
+                    <span class="legend-dot pending"></span>
+                    Pending
+                    <strong>20%</strong>
+                </div>
+
+                <div>
+                    <span class="legend-dot processing"></span>
+                    Processing
+                    <strong>15%</strong>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Recent Orders -->
+<div class="dashboard-card">
+
+    <div class="card-heading">
+
+        <div>
+            <h5>Recent Orders</h5>
+            <p>Latest transactions from your store</p>
+        </div>
+
+        <a href="#" class="view-all">
+            View All <i class="fas fa-arrow-right ms-1"></i>
+        </a>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table custom-table align-middle">
+
+            <thead>
+                <tr>
+                    <th>ORDER ID</th>
+                    <th>CUSTOMER</th>
+                    <th>PRODUCT</th>
+                    <th>DATE</th>
+                    <th>AMOUNT</th>
+                    <th>STATUS</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <% orders.forEach(order => { %>
+
+                    <tr>
+
+                        <td>
+                            <strong class="order-id"><%= order.id %></strong>
+                        </td>
+
+                        <td>
+                            <div class="customer-name">
+                                <div class="customer-avatar">
+                                    <%= order.customer.charAt(0) %>
+                                </div>
+                                <span><%= order.customer %></span>
+                            </div>
+                        </td>
+
+                        <td><%= order.product %></td>
+
+                        <td><%= order.date %></td>
+
+                        <td>
+                            <strong><%= order.amount %></strong>
+                        </td>
+
+                        <td>
+                            <span class="status-badge <%= order.status.toLowerCase() %>">
+                                <%= order.status %>
+                            </span>
+                        </td>
+
+                        <td>
+                            <button class="table-action">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </td>
+
+                    </tr>
+
+                <% }) %>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
