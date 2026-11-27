@@ -4,7 +4,7 @@ import User from '../models/User.js';
 import Setting from '../models/Setting.js';
 
 const scrypt = promisify(crypto.scrypt);
-const resources = ['dashboard', 'users', 'products', 'orders', 'customers', 'inventory', 'categories', 'invoices', 'reports', 'payments', 'settings', 'profile'];
+const resources = ['dashboard', 'users', 'students', 'products', 'orders', 'customers', 'inventory', 'categories', 'invoices', 'reports', 'payments', 'settings', 'profile'];
 const actions = ['GET', 'POST', 'UPDATE', 'DELETE'];
 const allPermissions = () => ({ admin: true, ui: Object.fromEntries(resources.map(r => [r, true])), crud: Object.fromEntries(resources.map(r => [r, Object.fromEntries(actions.map(a => [a, true]))])) });
 

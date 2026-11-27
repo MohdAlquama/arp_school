@@ -32,6 +32,11 @@
             <i class="fas fa-chevron-down ms-auto menu-arrow"></i>
         </a><% } %>
 
+        <% if (canSee('students')) { %><a href="/students" class="sidebar-link <%= page === 'students' ? 'active' : '' %>">
+            <i class="fas fa-user-graduate"></i>
+            <span>Students</span>
+        </a><% } %>
+
         <% if (canSee('orders')) { %><a href="/orders" class="sidebar-link">
             <i class="fas fa-shopping-cart"></i>
             <span>Orders</span>
@@ -48,7 +53,7 @@
             <span>Inventory</span>
         </a><% } %>
 
-        <% if (canSee('categories')) { %><a href="/categories" class="sidebar-link">
+        <% if (canSee('categories')) { %><a href="/categories" class="sidebar-link <%= page === 'categories' ? 'active' : '' %>">
             <i class="fas fa-tags"></i>
             <span>Categories</span>
         </a><% } %>
@@ -65,9 +70,9 @@
             <span>Reports</span>
         </a><% } %>
 
-        <% if (canSee('payments')) { %><a href="/payments" class="sidebar-link">
+        <% if (canSee('payments')) { %><a href="/cashfree" class="sidebar-link <%= page === 'cashfree' ? 'active' : '' %>">
             <i class="fas fa-wallet"></i>
-            <span>Payments</span>
+            <span>Cashfree</span>
         </a><% } %>
 
         <div class="menu-label">SYSTEM</div>

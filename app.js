@@ -20,8 +20,9 @@ app.use(expressLayouts);
 app.set('layout', 'layouts/main');
 
 // Middleware
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(['/cashfree/webhook', '/api/v1/course-payments/webhook'], express.raw({ type: 'application/json', limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '4mb' }));
+app.use(express.json({ limit: '4mb' }));
 
 // Static Files
 app.use(express.static(path.join(__dirname, 'public')));

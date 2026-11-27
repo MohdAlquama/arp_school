@@ -1,0 +1,77 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div><h1 class="h3 mb-1"><%= student.id ? 'Edit student' : 'Add student' %></h1><p class="text-muted mb-0">Fields marked * are required.</p></div>
+    <a href="/students" class="btn btn-outline-secondary">Back to students</a>
+</div>
+
+<% if (error) { %><div class="alert alert-danger"><%= error %></div><% } %>
+
+<form method="post" action="<%= student.id ? '/students/' + student.id : '/students' %>" class="card border-0 shadow-sm" id="student-form">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-12"><label class="form-label" for="student-image">Student image</label><div class="d-flex align-items-center gap-3"><% if (student.hasImage) { %><img id="student-image-preview" src="/students/<%= student.id %>/image" alt="Student image" class="rounded-circle" style="width:76px;height:76px;object-fit:cover"><% } else { %><img id="student-image-preview" alt="Image preview" class="rounded-circle d-none" style="width:76px;height:76px;object-fit:cover"><% } %><input class="form-control" id="student-image" type="file" accept="image/jpeg,image/png,image/webp"><input type="hidden" id="image-data" name="image_data"><input type="hidden" name="has_image" value="<%= student.hasImage ? '1' : '' %>"></div><div class="form-text">JPG, PNG, or WebP; maximum 2 MB.</div><% if (student.hasImage) { %><div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="remove-image" name="remove_image"><label class="form-check-label" for="remove-image">Remove current image</label></div><% } %></div>
+
+            <div class="col-md-6"><label class="form-label" for="student-name">Student name *</label><input class="form-control" id="student-name" name="student_name" maxlength="160" value="<%= student.student_name %>" required></div>
+            <div class="col-md-6"><label class="form-label" for="gender">Gender *</label><select class="form-select" id="gender" name="gender" required><option value="">Select gender</option><% ['Male', 'Female', 'Other'].forEach(gender => { %><option value="<%= gender %>" <%= student.gender === gender ? 'selected' : '' %>><%= gender %></option><% }) %></select></div>
+            <div class="col-md-6"><label class="form-label" for="father-name">Father name</label><input class="form-control" id="father-name" name="father_name" maxlength="160" value="<%= student.father_name || '' %>"></div>
+            <div class="col-md-6"><label class="form-label" for="mother-name">Mother name</label><input class="form-control" id="mother-name" name="mother_name" maxlength="160" value="<%= student.mother_name || '' %>"></div>
+            <div class="col-md-6"><label class="form-label" for="student-number">Student number</label><input class="form-control" id="student-number" name="student_number" maxlength="60" value="<%= student.student_number || '' %>"></div>
+            <div class="col-md-6"><label class="form-label" for="father-phone">Father phone number</label><input class="form-control" id="father-phone" name="father_phone" type="tel" maxlength="30" value="<%= student.father_phone || '' %>"></div>
+            <div class="col-md-6"><label class="form-label" for="alternate-phone">Alternate phone</label><input class="form-control" id="alternate-phone" name="alternate_phone" type="tel" maxlength="30" value="<%= student.alternate_phone || '' %>"></div>
+            <div class="col-md-6"><label class="form-label" for="whatsapp-number">Student WhatsApp number</label><input class="form-control" id="whatsapp-number" name="whatsapp_number" type="tel" maxlength="30" value="<%= student.whatsapp_number || '' %>"></div>
+            <div class="col-md-6"><label class="form-label" for="total-fee">Total fee (₹)</label><input class="form-control" id="total-fee" name="total_fee" type="number" min="0" max="99999999.99" step="0.01" value="<%= student.total_fee ?? '0.00' %>"></div>
+            <div class="col-md-6"><label class="form-label" for="category-id">Category *</label><select class="form-select" id="category-id" name="category_id" required><option value="">Select category</option><% categories.forEach(category => { %><option value="<%= category.id %>" <%= String(student.category_id) === String(category.id) ? 'selected' : '' %>><%= category.name %></option><% }) %></select></div>
+            <div class="col-md-6"><label class="form-label" for="subcategory-id">Subcategory *</label><select class="form-select" id="subcategory-id" name="subcategory_id" required><option value="">Select subcategory</option><% subcategories.forEach(subcategory => { %><option value="<%= subcategory.id %>" <%= String(student.subcategory_id) === String(subcategory.id) ? 'selected' : '' %>><%= subcategory.name %></option><% }) %></select></div>
+            <div class="col-12"><label class="form-label" for="remarks">Remarks</label><textarea class="form-control" id="remarks" name="remarks" rows="3" maxlength="5000"><%= student.remarks || '' %></textarea></div>
+        </div>
+    </div>
+    <div class="card-footer bg-white d-flex gap-2"><button class="btn btn-primary" id="save-student"><%= student.id ? 'Update student' : 'Save student' %></button><a href="/students" class="btn btn-outline-secondary">Cancel</a></div>
+</form>
+
+<script>
+(() => {
+    const form = document.getElementById('student-form');
+    const imageInput = document.getElementById('student-image');
+    const imageData = document.getElementById('image-data');
+    const preview = document.getElementById('student-image-preview');
+    const category = document.getElementById('category-id');
+    const subcategory = document.getElementById('subcategory-id');
+    let imageRead = Promise.resolve();
+
+    imageInput.addEventListener('change', () => {
+        const file = imageInput.files[0];
+        imageData.value = '';
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) {
+            imageInput.value = '';
+            alert('Student image must be 2 MB or smaller.');
+            return;
+        }
+        imageRead = new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => { imageData.value = reader.result; preview.src = reader.result; preview.classList.remove('d-none'); resolve(); };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    });
+
+    form.addEventListener('submit', async event => {
+        event.preventDefault();
+        try { await imageRead; form.submit(); }
+        catch { alert('Could not read the selected image.'); }
+    });
+
+    category.addEventListener('change', async () => {
+        subcategory.innerHTML = '<option value="">Select subcategory</option>';
+        if (!category.value) return;
+        const response = await fetch(`/students/categories/${encodeURIComponent(category.value)}/subcategories`);
+        if (!response.ok) return;
+        const items = await response.json();
+        items.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = item.name;
+            subcategory.append(option);
+        });
+    });
+})();
+</script>

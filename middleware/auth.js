@@ -43,7 +43,7 @@ export function requireAuth(req, res, next) {
 export function requirePermission(resource, action) {
     return (req, res, next) => {
         const perms = req.user?.permissions || {};
-        if (perms.admin || perms[resource]?.[action]) return next();
+        if (perms.admin || perms.crud?.[resource]?.[action] || perms[resource]?.[action]) return next();
         return res.status(403).send('403 - You do not have permission to perform this action');
     };
 }
